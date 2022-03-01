@@ -6,6 +6,7 @@
 #define LED_tx 6
 RH_ASK rf_driver; //default tx pin is 12
 
+int i = 0;
 
 void setup() {
   start:
@@ -17,21 +18,26 @@ void setup() {
   pinMode(LED_tx,OUTPUT);
   if(!rf_driver.init()){
     Serial.println("RF Failed");
+    delay(1000);
     goto start;
   }
 }
 
 void loop() {
-  // const byte x[100] ={21,23,42,34,54,23,23,12,32,43,2,65,43,12,65,12,32,76,43,65,85,37};
-  const byte x = 31;
+  const uint8_t x[22] ={21,23,42,34,54,23,23,12,32,43,2,65,43,12,65,12,32,76,43,65,85,37};
+  // const uint8_t x = B101100;
   // rf_driver.send((uint8_t *)x[1],sizeof(x[1])); 
-  if(!rf_driver.send((uint8_t *)x,sizeof(x))){
-    Serial.println('not sent');
-  }
+  rf_driver.send(&x[i],sizeof(x[i]));
   rf_driver.waitPacketSent();
   digitalWrite(LED_tx,HIGH);
   delay(500);
   digitalWrite(LED_tx,LOW);
   delay(500);
+  (i>=21)?i=0:i++;
   Serial.println("SENT");
+
+  // const char *msg = "Hello World";
+  // rf_driver.send((uint8_t *)msg, strlen(msg));
+  // rf_driver.waitPacketSent();
+  // delay(1000);
 }
