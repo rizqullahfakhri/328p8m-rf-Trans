@@ -1,34 +1,65 @@
 #include <Arduino.h>
 #include <avr/power.h>
-#include <RH_ASK.h>
-#include <SPI.h>
-#include <EEPROM.h>
+
+
 
 #define LED_tx 6
+#define pin_mode 3
+#define pin_stop 4
 #define ADC_VREV_mV 3300.0
 #define ADC_RESOLUTION 1024.0
-RH_ASK rf_driver;//edit lib to txPin 8
 
-int i = 0;
+int val = 0;
+
+void sendByte(byte input){
+  int i;
+  
+  for(i=0; i<20; i++){
+    digitalWrite(8, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(8, LOW);
+    delayMicroseconds(500);
+  }
+
+  digitalWrite(8, HIGH);
+  delayMicroseconds(3000);
+  digitalWrite(8, LOW);
+  delayMicroseconds(500);
+  
+    
+  for(i=0; i<8; i++){
+    if(bitRead(input,i)==1)
+      digitalWrite(8, HIGH);
+    else
+      digitalWrite(8, LOW);
+    delayMicroseconds(500);
+  
+    if(bitRead(input,i)==1)
+      digitalWrite(8, LOW);
+    else
+      digitalWrite(8, HIGH);
+    delayMicroseconds(500);
+  }//i
+
+  
+  digitalWrite(8, LOW);
+}
 
 void BER_Send(){
   //BER calculation
-  const uint8_t x[128] ={21,45,42,34,54,96,41,12,32,43
+  byte x[128] ={21,45,42,34,54,96,41,12,32,43
                         ,23,65,43,12,65,12,32,76,43,65
                         ,85,37,42,32,54,34,23,65,47,87
                         ,69,12,3,4,39,10,90,98,75,42
                         ,56,74,35,46,76,58,34,132,129,221
                         ,232,54,121,153,178,165,186,190,165,35
                         };
-  // const uint8_t x = B101100;
-  // rf_driver.send((uint8_t *)x[1],sizeof(x[1])); 
-  rf_driver.send(&x[i],sizeof(x[i]));
-  rf_driver.waitPacketSent();
+  sendByte(x[val]);
   digitalWrite(LED_tx,HIGH);
   delay(500);
   digitalWrite(LED_tx,LOW);
   delay(500);
-  (i>=127)?i=0:i++;
+  (val>=127)?val=0:val++;
   Serial.println("SENT");
 }
 
@@ -40,8 +71,9 @@ float calculate_temp(){
 }
 
 void SendTemp(){
-  // const char* temp = calculate_temp();
-  // rf_driver.send(temp,sizeof(temp));
+  char temp[16];
+  float C = calculate_temp();
+
 }
 void setup() {
   start:
@@ -50,11 +82,8 @@ void setup() {
   power_twi_disable();
   power_timer2_disable();
   pinMode(LED_tx,OUTPUT);
-  if(!rf_driver.init()){
-    Serial.println("RF Failed");
-    delay(1000);
-    goto start;
-  }
+  pinMode(pin_mode,INPUT);
+  pinMode(pin_stop,INPUT);
 }
 
 void loop() {
