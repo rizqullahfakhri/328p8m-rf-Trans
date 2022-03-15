@@ -2,7 +2,6 @@
 #include <avr/power.h>
 
 
-
 #define LED_tx 6
 #define pin_mode 3
 #define pin_stop 4
@@ -10,6 +9,9 @@
 #define ADC_RESOLUTION 1024.0
 
 int val = 0;
+int counter = 0;
+int ledState = LOW;
+unsigned long previousMillis = 0;
 
 void sendByte(byte input){
   int i;
@@ -56,9 +58,9 @@ void BER_Send(){
                         };
   sendByte(x[val]);
   digitalWrite(LED_tx,HIGH);
-  delay(500);
+  delay(100);
   digitalWrite(LED_tx,LOW);
-  delay(500);
+  delay(100);
   (val>=127)?val=0:val++;
   Serial.println("SENT");
 }
@@ -73,10 +75,28 @@ float calculate_temp(){
 void SendTemp(){
   char temp[16];
   float C = calculate_temp();
-
+  
 }
+
+void blinkLED(int interval){
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+
+    // if the LED is off turn it on and vice-versa:
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
+    }
+
+    // set the LED with the ledState of the variable:
+    digitalWrite(LED_tx, ledState);
+  }
+}
+
 void setup() {
-  start:
   Serial.begin(9600);
   Serial.println("Turn ON");
   power_twi_disable();
@@ -84,8 +104,29 @@ void setup() {
   pinMode(LED_tx,OUTPUT);
   pinMode(pin_mode,INPUT);
   pinMode(pin_stop,INPUT);
+  mode:
+  if (counter == 0){
+    blinkLED(100);
+  }else if (counter == 1){
+    blinkLED(500);
+  }
+  if(digitalRead(pin_stop)==HIGH){
+    if(digitalRead(pin_mode)==LOW){
+      if(counter!=1)
+      counter ++;
+      else counter = 0;
+      count:
+      if(digitalRead(pin_mode)==LOW){
+        goto count;
+      }
+    }
+    goto mode;
+  }
 }
 
 void loop() {
-  BER_Send();
+  if(counter ==0){
+    BER_Send();
+  }
+  
 }
