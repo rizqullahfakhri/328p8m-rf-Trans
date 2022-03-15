@@ -101,9 +101,11 @@ void setup() {
   Serial.println("Turn ON");
   power_twi_disable();
   power_timer2_disable();
+  power_spi_disable();
   pinMode(LED_tx,OUTPUT);
-  pinMode(pin_mode,INPUT);
-  pinMode(pin_stop,INPUT);
+  pinMode(8,OUTPUT);
+  pinMode(pin_mode,INPUT_PULLUP);
+  pinMode(pin_stop,INPUT_PULLUP);
   mode:
   if (counter == 0){
     blinkLED(100);
@@ -125,8 +127,6 @@ void setup() {
 }
 
 void loop() {
-  if(counter ==0){
-    BER_Send();
-  }
+  BER_Send();
   
 }
