@@ -5,13 +5,14 @@
 #define LED_tx 6
 #define pin_mode 3
 #define pin_stop 4
-#define ADC_VREV_mV 1100.0
+#define TEMP_VAR 1100.0
 #define ADC_RESOLUTION 1024.0
 
 int val = 0;
 int counter = 0;
 int ledState = LOW;
 unsigned long previousMillis = 0;
+
 
 void sendByte(byte input){
   int i;
@@ -55,6 +56,11 @@ void BER_Send(){
                 ,69,12,3,4,39,10,90,98,75,42
                 ,56,74,35,46,76,58,34,132,129,221
                 ,232,54,121,153,178,165,186,190,165,35
+                ,125,231,176,198,185,89,63,95,129,142
+                ,176,186,184,98,90,76,72,28,30,10
+                ,14,29,74,80,94,187,190,211,201,207
+                ,19,28,25,15,54,86,219,200,95,83
+                ,18,52,34,57,87,90,92,86
                 };
   sendByte(x[val]);
   digitalWrite(LED_tx,HIGH);
@@ -67,15 +73,25 @@ void BER_Send(){
 
 float calculate_temp(){
   float value = analogRead(A0);
-  float millivolt = value*(ADC_VREV_mV/ADC_RESOLUTION);
+  float millivolt = value*(TEMP_VAR/ADC_RESOLUTION);
   float tempC = (millivolt/10);
   return tempC;
 }
 
 void SendTemp(){
-  char temp[16];
   float C = calculate_temp();
-  
+  int firstNum = C;
+  float decNum = abs(firstNum - C)*100;
+  int finDec = decNum;
+  digitalWrite(LED_tx,HIGH);
+  Serial.println(C);
+  sendByte(firstNum);
+  Serial.println(firstNum);
+  sendByte(finDec);
+  Serial.println(finDec);
+  sendByte('#');
+  digitalWrite(LED_tx,LOW);
+  delay(100);
 }
 
 void blinkLED(int interval){
@@ -100,6 +116,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Turn ON");
   power_twi_disable();
+  power_timer1_disable();
   power_timer2_disable();
   power_spi_disable();
   pinMode(LED_tx,OUTPUT);
@@ -127,6 +144,7 @@ void setup() {
 }
 
 void loop() {
+  if(counter == 0)
   BER_Send();
-
+  else SendTemp();
 }
