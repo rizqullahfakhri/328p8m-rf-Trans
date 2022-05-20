@@ -77,8 +77,7 @@ void BER_Send(){
 
 float calculate_temp(){
   float value = analogRead(A0);
-  float millivolt = value*(TEMP_VAR/ADC_RESOLUTION);
-  float tempC = (millivolt/10);
+  float tempC = 0.4071*value-64.306;
   return tempC;
 }
 
