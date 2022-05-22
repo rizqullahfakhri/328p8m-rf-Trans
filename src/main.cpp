@@ -113,6 +113,7 @@ void BER_Send(){
   digitalWrite(LED_tx,HIGH);
   delay(100);
   digitalWrite(LED_tx,LOW);
+  delay(1000);
 
 }
 
