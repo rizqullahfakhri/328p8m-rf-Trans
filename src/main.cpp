@@ -13,9 +13,9 @@ int x = 0;
 int counter = 0;
 int ledState = LOW;
 unsigned long previousMillis = 0;
+uint16_t input = 0;
 
-
-void sendByte(byte input){
+void sendByte(uint16_t input){
   int i;
   
   for(i=0; i<20; i++){
@@ -31,7 +31,7 @@ void sendByte(byte input){
   delayMicroseconds(500);
   
     
-  for(i=0; i<8; i++){
+  for(i=0; i<13; i++){
     if(bitRead(input,i)==1)
       digitalWrite(8, HIGH);
     else
@@ -113,7 +113,7 @@ void BER_Send(){
   digitalWrite(LED_tx,HIGH);
   delay(100);
   digitalWrite(LED_tx,LOW);
-  delay(1000);
+  delay(200);
 
 }
 
@@ -125,18 +125,22 @@ float calculate_temp(){
 
 void SendTemp(){
   float C = calculate_temp();
-  int firstNum = C;
-  float decNum = abs(firstNum - C)*100;
-  int finDec = decNum;
+  float finNum = C*100;
+  int Num = finNum;
   digitalWrite(LED_tx,HIGH);
-  Serial.println(C);
-  sendByte(firstNum);
-  Serial.println(firstNum);
-  sendByte(finDec);
-  Serial.println(finDec);
-  sendByte('}');
+  Serial.println(Num);
+  sendByte(Num);
+  // int firstNum = C;
+  // float decNum = abs(firstNum - C)*100;
+  // int finDec = decNum;
+  // Serial.println(C);
+  // sendByte(firstNum);
+  // // Serial.println(firstNum);
+  // sendByte(finDec);
+  // // Serial.println(finDec);
+  // sendByte('}');
   digitalWrite(LED_tx,LOW);
-  delay(100);
+  delay(500);
 }
 
 void blinkLED(int interval){
@@ -159,7 +163,7 @@ void blinkLED(int interval){
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Turn ON");
+  // Serial.println("Turn ON");
   power_twi_disable();
   power_timer1_disable();
   power_timer2_disable();
