@@ -13,7 +13,6 @@ int x = 0;
 int counter = 0;
 int ledState = LOW;
 unsigned long previousMillis = 0;
-uint16_t input = 0;
 
 void sendByte(uint16_t input){
   int i;
@@ -31,7 +30,7 @@ void sendByte(uint16_t input){
   delayMicroseconds(500);
   
     
-  for(i=0; i<13; i++){
+  for(i=0; i<9; i++){
     if(bitRead(input,i)==1)
       digitalWrite(8, HIGH);
     else
@@ -125,8 +124,11 @@ float calculate_temp(){
 
 void SendTemp(){
   float C = calculate_temp();
-  float finNum = C*100;
+  float finNum = C*10;
   int Num = finNum;
+  if(Num > 512){
+    Num = 511;
+  }
   digitalWrite(LED_tx,HIGH);
   Serial.println(Num);
   sendByte(Num);
@@ -140,7 +142,7 @@ void SendTemp(){
   // // Serial.println(finDec);
   // sendByte('}');
   digitalWrite(LED_tx,LOW);
-  delay(500);
+  delay(200);
 }
 
 void blinkLED(int interval){
