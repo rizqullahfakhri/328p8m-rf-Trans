@@ -19,15 +19,15 @@ void sendByte(uint16_t input){
   //Start Bit
   for(i=0; i<20; i++){
     digitalWrite(8, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(500);
     digitalWrite(8, LOW);
-    delayMicroseconds(250);
+    delayMicroseconds(500);
   }
   //Confirm Bit
   digitalWrite(8, HIGH);
-  delayMicroseconds(1500);
+  delayMicroseconds(3000);
   digitalWrite(8, LOW);
-  delayMicroseconds(250);
+  delayMicroseconds(500);
   
   //Message Bit 
   for(i=0; i<9; i++){
@@ -35,13 +35,13 @@ void sendByte(uint16_t input){
       digitalWrite(8, HIGH);
     else
       digitalWrite(8, LOW);
-    delayMicroseconds(250);
+    delayMicroseconds(500);
   
     if(bitRead(input,i)==1)
       digitalWrite(8, LOW);
     else
       digitalWrite(8, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(500);
   }//i
 
   
@@ -53,15 +53,15 @@ void BER_Send(){
   //Start Bit
   for(i=0; i<20; i++){
   digitalWrite(8, HIGH);
-  delayMicroseconds(250);
+  delayMicroseconds(500);
   digitalWrite(8, LOW);
-  delayMicroseconds(250);
+  delayMicroseconds(500);
 }
   //Confirm Bit
   digitalWrite(8, HIGH);
-  delayMicroseconds(1500);
+  delayMicroseconds(3000);
   digitalWrite(8, LOW);
-  delayMicroseconds(250);
+  delayMicroseconds(500);
   
   //Message Bit
   for(i=0; i<1024; i++){
@@ -69,7 +69,7 @@ void BER_Send(){
   digitalWrite(8, HIGH);
   else
   digitalWrite(8, LOW);
-  delayMicroseconds(250);
+  delayMicroseconds(500);
   
   if(x==1){
     digitalWrite(8, LOW);
@@ -80,7 +80,7 @@ void BER_Send(){
     x = 1;
   }
   
-  delayMicroseconds(250);
+  delayMicroseconds(500);
 }//i
 
   digitalWrite(8, LOW);
