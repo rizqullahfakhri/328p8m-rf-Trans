@@ -25,7 +25,7 @@ void sendByte(uint16_t input){
   }
   //Confirm Bit
   digitalWrite(8, HIGH);
-  delayMicroseconds(3000);
+  delayMicroseconds(1500);
   digitalWrite(8, LOW);
   delayMicroseconds(500);
   
@@ -59,12 +59,12 @@ void BER_Send(){
 }
   //Confirm Bit
   digitalWrite(8, HIGH);
-  delayMicroseconds(3000);
+  delayMicroseconds(1500);
   digitalWrite(8, LOW);
   delayMicroseconds(500);
   
   //Message Bit
-  for(i=0; i<1024; i++){
+  for(i=0; i<1250; i++){
   if(x == 1)
   digitalWrite(8, HIGH);
   else
@@ -94,7 +94,7 @@ void BER_Send(){
 
 float calculate_temp(){
   float value = analogRead(A0);
-  float tempC = 0.4071*value-81.814;
+  float tempC = 0.1423*value-79.253;
   return tempC;
 }
 
@@ -151,6 +151,7 @@ void setup() {
   pinMode(8,OUTPUT);
   pinMode(pin_mode,INPUT_PULLUP);
   pinMode(pin_stop,INPUT_PULLUP);
+  analogReference(INTERNAL); 
   mode:
   if (counter == 0){
     blinkLED(100);
